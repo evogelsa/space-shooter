@@ -11,9 +11,10 @@ public class World : MonoBehaviour {
     private float startTimeMax = 2.5f;
     private float timeBetweenSpawn;
 
-    public Rigidbody2D Asteroid;
-
     private Vector2 position;
+
+    public Rigidbody2D[] Asteroids;
+    private Rigidbody2D Asteroid;
 
     // Start is called before the first frame update
     void Start() {
@@ -49,6 +50,8 @@ public class World : MonoBehaviour {
             direction.x = shipPos.x - position.x;
             direction.y = shipPos.y - position.y;
             direction.Normalize();
+
+            Asteroid = Asteroids[Random.Range(0,2)];
 
             Rigidbody2D inst = Instantiate(Asteroid, position,
                     Quaternion.identity);

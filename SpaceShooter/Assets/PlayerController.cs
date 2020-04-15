@@ -18,6 +18,14 @@ public class PlayerController : MonoBehaviour {
 
     private float angle;
 
+    private Animator animator;
+    private Rigidbody2D rb2d;
+
+    void Start() {
+        animator = gameObject.GetComponent<Animator>();
+        rb2d = gameObject.GetComponent<Rigidbody2D>();
+    }
+
     // Update is called once per frame
     void Update() {
         Vector3 mousePos = Input.mousePosition;
@@ -52,34 +60,43 @@ public class PlayerController : MonoBehaviour {
             down = false;
         }
 
+        if (left || right || up || down) {
+            animator.SetBool("IsMoving", true);
+        } else {
+            animator.SetBool("IsMoving", false);
+        }
+
         if (Input.GetMouseButtonDown(0)) {
-            Rigidbody2D inst = Instantiate(Projectile, transform.position,
-                    Quaternion.identity);
             Vector2 direction = new Vector2(mousePos.x, mousePos.y);
             direction.Normalize();
+
+            Vector3 spawnOffset = direction * 1f;
+
+            Rigidbody2D inst = Instantiate(Projectile, transform.position + spawnOffset,
+                    Quaternion.identity);
+            
+            inst.rotation = angle - 90;
             inst.velocity = direction * ProjectileSpeed;
+
+
         }
     }
 
     void FixedUpdate() {
         if (left) {
-            transform.Translate(Vector2.left * ShipSpeed * Time.deltaTime, 
-                    Space.World);
+            rb2d.AddForce(Vector2.left * ShipSpeed * Time.deltaTime);
         }
 
         if (right) {
-            transform.Translate(Vector2.right * ShipSpeed * Time.deltaTime, 
-                    Space.World);
+            rb2d.AddForce(Vector2.right * ShipSpeed * Time.deltaTime);
         }
 
         if (up) {
-            transform.Translate(Vector2.up * ShipSpeed * Time.deltaTime, 
-                    Space.World);
+            rb2d.AddForce(Vector2.up * ShipSpeed * Time.deltaTime);
         }
 
         if (down) {
-            transform.Translate(Vector2.down * ShipSpeed * Time.deltaTime, 
-                    Space.World);
+            rb2d.AddForce(Vector2.down * ShipSpeed * Time.deltaTime);
         }
         
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 
