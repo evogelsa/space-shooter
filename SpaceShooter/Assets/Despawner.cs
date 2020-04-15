@@ -12,7 +12,7 @@ public class Despawner : MonoBehaviour {
     void Update() {
         float x = transform.position.x;
         float y = transform.position.y;
-        if (x > 20 || x < -20 || y > 20 || y < -20) {
+        if (x > 25 || x < -25 || y > 20 || y < -20) {
             Destroy(gameObject);
         }
     }

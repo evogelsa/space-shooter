@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class World : MonoBehaviour {
 
+    public float ForceMin = 100f;
+    public float ForceMax = 800f;
+
     private float startTimeMin = .5f;
-    private float startTimeMax = 3f;
+    private float startTimeMax = 2.5f;
     private float timeBetweenSpawn;
 
     public Rigidbody2D Asteroid;
@@ -49,7 +52,7 @@ public class World : MonoBehaviour {
 
             Rigidbody2D inst = Instantiate(Asteroid, position,
                     Quaternion.identity);
-            inst.velocity = direction * Random.Range(2,10);
+            inst.AddForce(direction * Random.Range(ForceMin,ForceMax));
 
             timeBetweenSpawn = Random.Range(startTimeMin, startTimeMax);
         } else {
