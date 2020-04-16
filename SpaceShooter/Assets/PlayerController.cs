@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        bool paused = PauseMenu.GameIsPaused;
+
         Vector3 mousePos = Input.mousePosition;
         Vector3 shipPos = Camera.main.WorldToScreenPoint(transform.position);
 
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour {
             animator.SetBool("IsMoving", false);
         }
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !paused) {
             Vector2 direction = new Vector2(mousePos.x, mousePos.y);
             direction.Normalize();
 

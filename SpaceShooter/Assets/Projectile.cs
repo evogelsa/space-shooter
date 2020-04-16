@@ -14,7 +14,7 @@ public class Projectile : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.tag != "Player") {
+        if (collision.tag == "Asteroid") {
             Destroy(gameObject);
             Destroy(collision.gameObject);
         }
