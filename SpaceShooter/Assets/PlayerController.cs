@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour {
 
@@ -20,6 +21,15 @@ public class PlayerController : MonoBehaviour {
 
     private Animator animator;
     private Rigidbody2D rb2d;
+
+    public Light2D leftLight;
+    public Light2D rightLight;
+    public Light2D headLight;
+    private bool isMoving = false;
+
+    public float health = 100f;
+    private bool isFlashing = false;
+    private bool canMove = true;
 
     void Start() {
         animator = gameObject.GetComponent<Animator>();
@@ -64,8 +74,10 @@ public class PlayerController : MonoBehaviour {
 
         if (left || right || up || down) {
             animator.SetBool("IsMoving", true);
+            isMoving = true;
         } else {
             animator.SetBool("IsMoving", false);
+            isMoving = false;
         }
 
         if (Input.GetMouseButtonDown(0) && !paused) {
@@ -79,36 +91,89 @@ public class PlayerController : MonoBehaviour {
             
             inst.rotation = angle - 90;
             inst.velocity = direction * ProjectileSpeed;
-
-
         }
+
     }
 
     void FixedUpdate() {
-        if (left) {
-            rb2d.AddForce(Vector2.left * ShipSpeed * Time.deltaTime);
+        if (canMove) {
+            if (left) {
+                rb2d.AddForce(Vector2.left * ShipSpeed * Time.deltaTime);
+            }
+
+            if (right) {
+                rb2d.AddForce(Vector2.right * ShipSpeed * Time.deltaTime);
+            }
+
+            if (up) {
+                rb2d.AddForce(Vector2.up * ShipSpeed * Time.deltaTime);
+            }
+
+            if (down) {
+                rb2d.AddForce(Vector2.down * ShipSpeed * Time.deltaTime);
+            }
         }
 
-        if (right) {
-            rb2d.AddForce(Vector2.right * ShipSpeed * Time.deltaTime);
-        }
-
-        if (up) {
-            rb2d.AddForce(Vector2.up * ShipSpeed * Time.deltaTime);
-        }
-
-        if (down) {
-            rb2d.AddForce(Vector2.down * ShipSpeed * Time.deltaTime);
-        }
-        
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 
                     ShipRotationOffset));
-
+    
+        if (isMoving) {
+            leftLight.pointLightOuterRadius = .85f;
+            rightLight.pointLightOuterRadius = .85f;
+        } else {
+            leftLight.pointLightOuterRadius = .45f;
+            rightLight.pointLightOuterRadius = .45f;
+        }
     }
 
-    void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.tag == "Asteroid") {
+    IEnumerator FlashLights() {
+        isFlashing = true;
+        
+        for (int i = 0; i < Random.Range(2,4); i++) {
+            Debug.Log(i);
+            leftLight.enabled = false;
+            rightLight.enabled = false;
+            headLight.enabled = false;
+
+            yield return new WaitForSeconds(Random.Range(.01f,.15f));
+
+            leftLight.enabled = true;
+            rightLight.enabled = true;
+            headLight.enabled = true;
+
+            yield return new WaitForSeconds(Random.Range(.01f,.10f));
+        }
+
+        isFlashing = false;
+    }
+
+    IEnumerator DisableMovement(float magnitude) {
+        float delay = magnitude / 30f;
+
+        canMove = false;
+        yield return new WaitForSeconds(delay);
+        canMove = true;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision) {
+        float magnitude = collision.relativeVelocity.magnitude;
+        if (magnitude > 7) {
+            health -= magnitude;
+            StartCoroutine(DisableMovement(magnitude));
+            if (!isFlashing) {
+                StartCoroutine(FlashLights());
+            }
+        }
+        if (health <= 0) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
+
+    // void OnTriggerEnter2D(Collider2D collision) {
+    //     if (collision.tag == "Asteroid") {
+    //         if (){
+    //             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    //         }
+    //     }
+    // }
 }
