@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour {
-    // Start is called before the first frame update
-    void Start() {
-        
-    }
 
-    // Update is called once per frame
-    void Update() {
-        
-    }
-
-    void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.tag == "Asteroid") {
+    void OnTriggerEnter2D(Collider2D col) {
+        if (col.tag == "Asteroid") {
             Destroy(gameObject);
-            Destroy(collision.gameObject);
+            Destroy(col.gameObject);
+        } else if (col.tag != "Player" && col.tag != "ShieldEffect") {
+            Destroy(gameObject);
         }
     }
 }

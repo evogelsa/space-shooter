@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class World : MonoBehaviour {
+public class Spawner : MonoBehaviour {
 
     public float ForceMin = 100f;
     public float ForceMax = 800f;
 
-    private float startTimeMin = .5f;
-    private float startTimeMax = 2.5f;
-    private float timeBetweenSpawn;
+    private float startTimeMin = .25f;
+    private float startTimeMax = 2.0f;
+    private float timeBetweenSpawn = 1.5f;
 
     private Vector2 position;
 
@@ -21,25 +21,24 @@ public class World : MonoBehaviour {
         
     }
 
-    // Update is called once per frame
-    void Update() {
+    void FixedUpdate() {
         if (timeBetweenSpawn <= 0) {
             switch (gameObject.name) {
             case "Spawner Left":
                 position = new Vector2(transform.position.x,
-                        Random.Range(-10,10));
+                        transform.position.y + Random.Range(-10f,10f));
                 break;
             case "Spawner Right":
                 position = new Vector2(transform.position.x,
-                        Random.Range(-10,10));
+                        transform.position.y + Random.Range(-10f,10f));
                 break;
             case "Spawner Top":
-                position = new Vector2(Random.Range(-10,10), 
-                        transform.position.y);
+                position = new Vector2(transform.position.x +
+                        Random.Range(-10f,10f), transform.position.y);
                 break;
             case "Spawner Bottom":
-                position = new Vector2(Random.Range(-10,10), 
-                        transform.position.y);
+                position = new Vector2(transform.position.x +
+                        Random.Range(-10f,10f), transform.position.y);
                 break;
             }
 

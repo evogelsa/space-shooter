@@ -6,6 +6,12 @@ TagManager:
   tags:
   - Asteroid
   - Border
+  - LargeAsteroid
+  - Star1
+  - Star2
+  - Star3
+  - ShieldItem
+  - ShieldEffect
   layers:
   - Default
   - TransparentFX
@@ -45,4 +51,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 1225934611
     locked: 0

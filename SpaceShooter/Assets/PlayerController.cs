@@ -6,16 +6,16 @@ using UnityEngine.Experimental.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour {
 
-    public float ShipSpeed = 8f;
-    public float ShipRotationOffset = 145f;
-
-    public Rigidbody2D Projectile;
-    public float ProjectileSpeed = 12f;
-
+    public float ShipThrust = 250f;
+    public float ShipRotationOffset = -90f;
+    public float MaxSpeed = 20f;
     private bool left = false;
     private bool right = false;
     private bool up = false;
     private bool down = false;
+
+    public Rigidbody2D Projectile;
+    public float ProjectileSpeed = 24f;
 
     private float angle;
 
@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour {
     public Light2D headLight;
     private bool isMoving = false;
 
+    public HealthBar healthBar;
     public float health = 100f;
     private bool isFlashing = false;
     private bool canMove = true;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         animator = gameObject.GetComponent<Animator>();
         rb2d = gameObject.GetComponent<Rigidbody2D>();
+        healthBar.SetMaxHealth(health);
     }
 
     // Update is called once per frame
@@ -93,30 +95,34 @@ public class PlayerController : MonoBehaviour {
             inst.velocity = direction * ProjectileSpeed;
         }
 
+        healthBar.SetHealth(health);
     }
 
     void FixedUpdate() {
-        if (canMove) {
+        Vector2 vel = rb2d.velocity;
+        if (canMove && vel.magnitude <= MaxSpeed) {
             if (left) {
-                rb2d.AddForce(Vector2.left * ShipSpeed * Time.deltaTime);
+                rb2d.AddForce(Vector2.left * ShipThrust * Time.deltaTime);
             }
 
             if (right) {
-                rb2d.AddForce(Vector2.right * ShipSpeed * Time.deltaTime);
+                rb2d.AddForce(Vector2.right * ShipThrust * Time.deltaTime);
             }
 
             if (up) {
-                rb2d.AddForce(Vector2.up * ShipSpeed * Time.deltaTime);
+                rb2d.AddForce(Vector2.up * ShipThrust * Time.deltaTime);
             }
 
             if (down) {
-                rb2d.AddForce(Vector2.down * ShipSpeed * Time.deltaTime);
+                rb2d.AddForce(Vector2.down * ShipThrust * Time.deltaTime);
             }
+        } else if (rb2d.velocity.magnitude > MaxSpeed) {
+            rb2d.velocity = vel.normalized * MaxSpeed;
         }
 
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 
                     ShipRotationOffset));
-    
+
         if (isMoving) {
             leftLight.pointLightOuterRadius = .85f;
             rightLight.pointLightOuterRadius = .85f;
@@ -130,7 +136,6 @@ public class PlayerController : MonoBehaviour {
         isFlashing = true;
         
         for (int i = 0; i < Random.Range(2,4); i++) {
-            Debug.Log(i);
             leftLight.enabled = false;
             rightLight.enabled = false;
             headLight.enabled = false;
