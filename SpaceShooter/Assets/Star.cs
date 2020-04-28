@@ -17,7 +17,7 @@ public class Star : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col) {
         if (col.tag == "Player") {
-            Color c = new Color(255,255,255,255);
+            Color c = new Color(1,1,1,1);
             switch (gameObject.name) {
             case "StarItem1":
                 star1.GetComponent<Image>().color = c;

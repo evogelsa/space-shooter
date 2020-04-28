@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour {
     private bool isFlashing = false;
     private bool canMove = true;
 
+    public GameObject shield;
+
     void Start() {
         animator = gameObject.GetComponent<Animator>();
         rb2d = gameObject.GetComponent<Rigidbody2D>();
@@ -162,7 +164,7 @@ public class PlayerController : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D collision) {
         float magnitude = collision.relativeVelocity.magnitude;
-        if (magnitude > 7) {
+        if (magnitude > 7 && !shield.activeSelf) {
             health -= magnitude;
             StartCoroutine(DisableMovement(magnitude));
             if (!isFlashing) {
